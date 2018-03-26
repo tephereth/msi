@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">inventory_shipping_source_selection_form.inventory_shipping_source_selection_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Source Selection</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <dataScope>data</dataScope>
+        <namespace>inventory_shipping_source_selection_form</namespace>
+        <deps>
+            <dep>inventory_shipping_source_selection_form.inventory_shipping_source_selection_form_data_source</dep>
+        </deps>
+        <buttons>
+            <button name="back">
+                <url path="*/*/index"/>
+                <class>back</class>
+                <label translate="true">Back</label>
+            </button>
+            <button name="reset">
+                <class>reset</class>
+                <label translate="true">Reset</label>
+            </button>
+            <!-- TODO: Add split button for source selection algorithms -->
+            <!-- TODO: Add save button (redirect to New Shipment page) -->
+        </buttons>
+    </settings>
+    <dataSource name="inventory_shipping_source_selection_form_data_source" component="Magento_Ui/js/form/provider">
+        <settings>
+            <!-- Add submit to new shipment -->
+            <submitUrl path="*/*/save"/>
+        </settings>
+        <dataProvider class="Magento\InventoryShipping\Ui\DataProvider\SourceSelectionDataProvider" name="inventory_shipping_source_selection_form_data_source">
+            <!-- TODO: not sure ??? -->
+            <settings>
+                <requestFieldName>order_id</requestFieldName>
+                <primaryFieldName>order_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="general" sortOrder="10">
+        <settings>
+            <label translate="true">General</label>
+            <collapsible>false</collapsible>
+            <opened>true</opened>
+        </settings>
+        <field name="source_code" formElement="select" sortOrder="10">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Select Source</label>
+            </settings>
+        </field>
+    </fieldset>
+    <dynamicRows name="shipment" component="Magento_Ui/js/dynamic-rows/dynamic-rows-grid" sortOrder="20" template="ui/dynamic-rows/templates/grid">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="dataProvider" xsi:type="string">shipment</item>
+                <item name="map" xsi:type="array">
+                    <item name="sku" xsi:type="string">sku</item>
+                    <item name="qty" xsi:type="string">qty</item>
+                </item>
+            </item>
+        </argument>
+        <settings>
+            <defaultRecord>false</defaultRecord>
+            <addButton>false</addButton>
+            <deleteProperty>false</deleteProperty>
+            <recordTemplate>record</recordTemplate>
+            <columnsHeader>true</columnsHeader>
+            <dndConfig>
+                <param name="enabled" xsi:type="boolean">false</param>
+            </dndConfig>
+        </settings>
+        <container name="record" component="Magento_Ui/js/dynamic-rows/record">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="isTemplate" xsi:type="boolean">true</item>
+                    <item name="is_collection" xsi:type="boolean">true</item>
+                    <item name="dataScope" xsi:type="string" />
+                </item>
+            </argument>
+            <field name="sku" formElement="input" sortOrder="10">
+                <settings>
+                    <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                    <dataType>text</dataType>
+                    <dataScope>sku</dataScope>
+                    <label translate="true">Product</label>
+                </settings>
+            </field>
+            <field name="qty" formElement="input" sortOrder="20">
+                <settings>
+                    <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                    <dataType>text</dataType>
+                    <dataScope>qty</dataScope>
+                    <label translate="true">Qty</label>
+                </settings>
+            </field>
+            <dynamicRows name="sources" component="Magento_Ui/js/dynamic-rows/dynamic-rows-grid" template="ui/dynamic-rows/templates/grid">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="dataProvider" xsi:type="string">shipment.sources</item>
+                        <item name="map" xsi:type="array">
+                            <item name="qty" xsi:type="string">qty</item>
+                        </item>
+                    </item>
+                </argument>
+                <settings>
+                    <defaultRecord>false</defaultRecord>
+                    <addButton>false</addButton>
+                    <deleteProperty>false</deleteProperty>
+                    <recordTemplate>record</recordTemplate>
+                    <columnsHeader>true</columnsHeader>
+                    <dndConfig>
+                        <param name="enabled" xsi:type="boolean">false</param>
+                    </dndConfig>
+                </settings>
+                <container name="record" component="Magento_Ui/js/dynamic-rows/record">
+                    <argument name="data" xsi:type="array">
+                        <item name="config" xsi:type="array">
+                            <item name="isTemplate" xsi:type="boolean">true</item>
+                            <item name="is_collection" xsi:type="boolean">true</item>
+                            <item name="dataScope" xsi:type="string" />
+                        </item>
+                    </argument>
+                    <field name="sourceName" formElement="input" sortOrder="10">
+                        <settings>
+                            <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                            <dataType>text</dataType>
+                            <dataScope>sourceName</dataScope>
+                            <label translate="true">Source</label>
+                        </settings>
+                    </field>
+                    <field name="qtyAvailable" formElement="input" sortOrder="20">
+                        <settings>
+                            <elementTmpl>ui/dynamic-rows/cells/text</elementTmpl>
+                            <dataType>text</dataType>
+                            <dataScope>qtyAvailable</dataScope>
+                            <label translate="true">Qty Available</label>
+                        </settings>
+                    </field>
+                    <field name="qtyToDeduct" formElement="input" sortOrder="30">
+                        <settings>
+                            <elementTmpl>ui/form/element/input</elementTmpl>
+                            <dataType>number</dataType>
+                            <label translate="true">Qty To Deduct</label>
+                        </settings>
+                    </field>
+                </container>
+            </dynamicRows>
+        </container>
+    </dynamicRows>
+</form>

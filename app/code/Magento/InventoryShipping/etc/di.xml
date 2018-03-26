@@ -35,4 +35,9 @@
     <type name="Magento\Sales\Model\Order\ShipmentFactory">
         <plugin name="collect_sources_for_shipment_items" type="Magento\InventoryShipping\Plugin\Sales\CollectSourcesForShipmentItems"/>
     </type>
+    <type name="Magento\Sales\Model\ResourceModel\Order\Shipment">
+        <plugin name="SaveSourceForShipment" type="Magento\InventoryShipping\Plugin\Sales\ResourceModel\Order\Shipment\SaveSourceForShipmentPlugin"/>
+        <plugin name="LoadSourceForShipment" type="Magento\InventoryShipping\Plugin\Sales\ResourceModel\Order\Shipment\LoadSourceForShipmentPlugin"/>
+        <plugin name="DeleteSourceForShipment" type="Magento\InventoryShipping\Plugin\Sales\ResourceModel\Order\Shipment\DeleteSourceForShipmentPlugin"/>
+    </type>
 </config>

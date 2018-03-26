@@ -9,12 +9,25 @@ namespace Magento\InventoryShipping\Plugin\Sales;
 
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\ShipmentFactory;
+use Magento\Sales\Api\Data\ShipmentExtensionFactory;
 
-/**
- * This is the best entry point for both POST and API request
- */
 class CollectSourcesForShipmentItems
 {
+    /**
+     * @var ShipmentExtensionFactory
+     */
+    private $shipmentExtensionFactory;
+
+    /**
+     * CollectSourcesForShipmentItems constructor.
+     * @param ShipmentExtensionFactory $shipmentExtensionFactory
+     */
+    public function __construct(
+        ShipmentExtensionFactory $shipmentExtensionFactory
+    ) {
+        $this->shipmentExtensionFactory = $shipmentExtensionFactory;
+    }
+
     /**
      * @param ShipmentFactory $subject
      * @param callable $proceed
@@ -22,7 +35,7 @@ class CollectSourcesForShipmentItems
      * @param array $items
      * @param null $tracks
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @return
+     * @return \Magento\Sales\Api\Data\ShipmentInterface
      */
     public function aroundCreate(
         ShipmentFactory $subject,
@@ -31,38 +44,14 @@ class CollectSourcesForShipmentItems
         array $items = [],
         $tracks = null
     ) {
-        $legacyItems = [];
-        $itemToProcess = [];
-        foreach ($items as $orderItemId => $data) {
-            if (!is_array($data)) {
-                //TODO: What we should do with bundle product items?
-               // $legacyItems[$orderItemId] = $data;
-            } else {
-                $qtySum = 0;
-                foreach ($data as $sourceCode => $qty) {
-                    $qty = (float)$qty;
-                    if ($qty > 0) {
-                        $qtySum += (float)$qty;
-                        $itemToProcess[$orderItemId][] = [
-                            'sourceCode' => $sourceCode,
-                            'qtyToDeduct' => (float)$qty
-                        ];
-                    }
-                }
-                $legacyItems[$orderItemId] = $qtySum;
-            }
-        }
-        $shipment = $proceed($order, $legacyItems, $tracks);
-        if (empty($items)) {
-            return $shipment;
-        }
+        //TODO: Used for test.. Most likely this plugin will be deleted
+        $shipment =  $proceed($order, $items, $tracks);
+        $shipmentExtension = $shipment->getExtensionAttributes();
 
-        /** @var \Magento\Sales\Api\Data\ShipmentItemInterface $item */
-        // TODO: https://github.com/magento-engcom/msi/issues/385
-        foreach ((array)$shipment->getItems() as $item) {
-            if (isset($itemToProcess[$item->getOrderItemId()])) {
-                $item->setSources($itemToProcess[$item->getOrderItemId()]);
-            }
+        if (empty($shipmentExtension)) {
+            $shipmentExtension = $this->shipmentExtensionFactory->create();
+            $shipmentExtension->setSourceCode('default');
+            $shipment->setExtensionAttributes($shipmentExtension);
         }
 
         return $shipment;
