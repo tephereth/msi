@@ -11,10 +11,10 @@ use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Model\StockManagement;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\InventoryCatalog\Model\GetProductTypesBySkusInterface;
+use Magento\InventoryCatalog\Model\GetSkusByProductIdsInterface;
 use Magento\InventoryConfiguration\Model\IsSourceItemsAllowedForProductTypeInterface;
 use Magento\InventoryReservations\Model\ReservationBuilderInterface;
 use Magento\InventoryReservationsApi\Api\AppendReservationsInterface;
-use Magento\InventoryCatalog\Model\GetSkusByProductIdsInterface;
 use Magento\InventorySales\Model\StockByWebsiteIdResolver;
 use Magento\InventorySalesApi\Api\IsProductSalableForRequestedQtyInterface;
 
@@ -105,7 +105,6 @@ class ProcessRegisterProductsSalePlugin
 
         $stockId = (int)$this->stockByWebsiteIdResolver->get((int)$websiteId)->getStockId();
         $productSkus = $this->getSkusByProductIds->execute(array_keys($items));
-        $this->checkItemsQuantity($items, $productSkus, $stockId);
 
         $productTypes = $this->getProductTypesBySkus->execute(array_values($productSkus));
         $reservations = [];
@@ -113,6 +112,8 @@ class ProcessRegisterProductsSalePlugin
             if (false === $this->isSourceItemsAllowedForProductType->execute($productTypes[$sku])) {
                 continue;
             }
+            $requestedQuantity = (float)$items[$productId];
+            $this->checkItemsQuantity($sku, $stockId, $requestedQuantity);
             $reservations[] = $this->reservationBuilder
                 ->setSku($sku)
                 ->setQuantity(-(float)$items[$productId])
@@ -127,24 +128,21 @@ class ProcessRegisterProductsSalePlugin
     }
 
     /**
-     * Check is all items salable
+     * Check is Product salable for requested quantity.
      *
-     * @param array $items
-     * @param array $productSkus
+     * @param string $sku
      * @param int $stockId
+     * @param float $qty
      * @return void
      * @throws LocalizedException
      */
-    private function checkItemsQuantity(array $items, array $productSkus, int $stockId)
+    private function checkItemsQuantity(string $sku, int $stockId, float $qty)
     {
-        foreach ($productSkus as $productId => $sku) {
-            $qty = (float)$items[$productId];
-            $isSalable = $this->isProductSalableForRequestedQty->execute($sku, $stockId, $qty)->isSalable();
-            if (false === $isSalable) {
-                throw new LocalizedException(
-                    __('Not all of your products are available in the requested quantity.')
-                );
-            }
+        $isSalable = $this->isProductSalableForRequestedQty->execute($sku, $stockId, $qty)->isSalable();
+        if (false === $isSalable) {
+            throw new LocalizedException(
+                __('Not all of your products are available in the requested quantity.')
+            );
         }
     }
 }
