@@ -260,7 +260,7 @@ toggleValueElements($('inventory_use_config_enable_qty_increments'), $('inventor
         <span><?= /* @escapeNotVerified */ __('Qty Increments') ?></span>
     </label>
     <div class="control">
-        <input type="text" class="input-text validate-digits" id="inventory_qty_increments" name="<?= /* @escapeNotVerified */ $block->getFieldSuffix() ?>[stock_data][qty_increments]" value="<?= /* @escapeNotVerified */ $block->getFieldValue('qty_increments') * 1 ?>" <?= /* @escapeNotVerified */ $_readonly ?>>
+        <input type="text" class="input-text" id="inventory_qty_increments" name="<?= /* @escapeNotVerified */ $block->getFieldSuffix() ?>[stock_data][qty_increments]" value="<?= /* @escapeNotVerified */ $block->getFieldValue('qty_increments') * 1 ?>" <?= /* @escapeNotVerified */ $_readonly ?>>
         <div class="control-inner-wrap">
             <?php $_checked = ($block->getFieldValue('use_config_qty_increments') || $block->isNew()) ? 'checked="checked"' : '' ?>
             <input type="checkbox" id="inventory_use_config_qty_increments" name="<?= /* @escapeNotVerified */ $block->getFieldSuffix() ?>[stock_data][use_config_qty_increments]" value="1" <?= /* @escapeNotVerified */ $_checked ?> onclick="toggleValueElements(this, this.parentNode);" <?= /* @escapeNotVerified */ $_readonly ?>>

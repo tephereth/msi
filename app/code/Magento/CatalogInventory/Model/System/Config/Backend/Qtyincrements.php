@@ -22,10 +22,5 @@ class Qtyincrements extends \Magento\Framework\App\Config\Value
     public function beforeSave()
     {
         $value = $this->getValue();
-        if (floor($value) != $value) {
-            throw new LocalizedException(
-                __("Quantity increments can't use decimals. Enter a new increment and try again.")
-            );
-        }
     }
 }
