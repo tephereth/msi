@@ -21,4 +21,14 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\InventorySales\Model\IsProductSalableCondition\IsProductSalableConditionChain">
+        <arguments>
+            <argument name="conditions" xsi:type="array">
+                <item name="has_salable_variations" xsi:type="array">
+                    <item name="sort_order" xsi:type="number">40</item>
+                    <item name="object" xsi:type="object">Magento\InventoryConfigurableProduct\Model\IsProductSalableCondition\HasSalableVariationsCondition</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
 </config>
