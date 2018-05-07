@@ -9,6 +9,7 @@ namespace Magento\InventoryCatalogAdminUi\Ui\DataProvider\Product\Form\Modifier;
 
 use Magento\Catalog\Model\Locator\LocatorInterface;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier;
+use Magento\CatalogInventory\Ui\DataProvider\Product\Form\Modifier\AdvancedInventory;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\InventoryCatalog\Model\IsSingleSourceModeInterface;
 use Magento\InventoryConfiguration\Model\IsSourceItemsAllowedForProductTypeInterface;
@@ -88,6 +89,11 @@ class StockStatus extends AbstractModifier
                 $meta,
                 [
                     'component' => 'Magento_InventoryCatalogAdminUi/js/product/form/stock-status',
+                    'imports' => [
+                        'relatedFieldPath' => '${ $.ns }.${ $.ns }.advanced_inventory_modal.'
+                            . AdvancedInventory::STOCK_DATA_FIELDS . '.container_is_in_stock.is_in_stock',
+                    ],
+
                 ]
             );
         } else {

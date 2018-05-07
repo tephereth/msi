@@ -4,12 +4,17 @@
  */
 
 define([
-    'Magento_Ui/js/form/element/select'
-], function (Abstract) {
+    'Magento_Ui/js/form/element/select',
+    'uiRegistry',
+    'underscore'
+], function (Select, uiRegistry, _) {
     'use strict';
 
-    return Abstract.extend({
+    return Select.extend({
         defaults: {
+            imports: {
+                relatedFieldPath: null
+            },
             links: {
                 value: null
             }
@@ -35,11 +40,18 @@ define([
 
         /** @inheritdoc */
         setDifferedFromDefault: function () {
+            var relatedField = uiRegistry.get(this.imports.relatedFieldPath);
+
             this._super();
+
+            // as we have two fields stock_status(at product page and advanced inventory modal) we need to sync it.
+            if (!_.isUndefined(relatedField) && parseFloat(relatedField.value()) !== parseFloat(this.value())) {
+                relatedField.value(this.value());
+            }
 
             if (parseFloat(this.initialValue) !== parseFloat(this.value())) {
                 this.source.set(this.dataScope, this.value());
-            } else {
+            } else if (!_.isUndefined(relatedField)) {
                 this.source.remove(this.dataScope);
             }
         }
