@@ -11,6 +11,9 @@ use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Copier;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\SearchCriteriaBuilderFactory;
+use Magento\Framework\Exception\CouldNotSaveException;
+use Magento\Framework\Exception\InputException;
+use Magento\Framework\Validation\ValidationException;
 use Magento\InventoryApi\Api\Data\SourceItemInterface;
 use Magento\InventoryApi\Api\SourceItemRepositoryInterface;
 use Magento\InventoryCatalogAdminUi\Observer\SourceItemsProcessor;
@@ -55,13 +58,16 @@ class CopySourceItemsPlugin
      * @param Product $result
      * @param Product $product
      * @return Product $result
+     * @throws CouldNotSaveException
+     * @throws InputException
+     * @throws ValidationException
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterCopy(
         Copier $subject,
         Product $result,
         Product $product
-    ) {
+    ): Product {
         $this->copySourceItems($product->getSku(), $result->getSku());
         return $result;
     }
@@ -83,8 +89,12 @@ class CopySourceItemsPlugin
     /**
      * @param string $originalSku
      * @param string $duplicateSku
+     * @return void
+     * @throws CouldNotSaveException
+     * @throws InputException
+     * @throws ValidationException
      */
-    private function copySourceItems(string $originalSku, string $duplicateSku)
+    private function copySourceItems(string $originalSku, string $duplicateSku): void
     {
         $sourceItems = $this->getSourceItems($originalSku);
 

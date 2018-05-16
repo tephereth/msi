@@ -38,8 +38,12 @@ class PreventProcessDefaultStockLinksPlugin
      * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function aroundProcess(StockSourceLinkProcessor $subject, \Closure $proceed, int $stockId, array $linksData)
-    {
+    public function aroundProcess(
+        StockSourceLinkProcessor $subject,
+        \Closure $proceed,
+        int $stockId,
+        array $linksData
+    ): void {
         if ($stockId !== $this->defaultStockProvider->getId()) {
             $proceed($stockId, $linksData);
         }

@@ -61,6 +61,7 @@ class QuantityPerSource extends AbstractModifier
 
     /**
      * @inheritdoc
+     * @throws NoSuchEntityException
      */
     public function modifyData(array $data)
     {
@@ -109,7 +110,7 @@ class QuantityPerSource extends AbstractModifier
             return $meta;
         }
 
-        $meta = array_replace_recursive($meta, [
+        return array_replace_recursive($meta, [
             'product_columns' => [
                 'children' => [
                     'quantity_per_source' => $this->getQuantityPerSourceMeta(),
@@ -119,7 +120,6 @@ class QuantityPerSource extends AbstractModifier
                 ],
             ],
         ]);
-        return $meta;
     }
 
     /**

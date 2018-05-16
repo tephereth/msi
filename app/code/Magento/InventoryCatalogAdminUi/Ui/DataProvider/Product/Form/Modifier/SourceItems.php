@@ -10,6 +10,7 @@ namespace Magento\InventoryCatalogAdminUi\Ui\DataProvider\Product\Form\Modifier;
 use Magento\Catalog\Model\Locator\LocatorInterface;
 use Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Inventory\Model\ResourceModel\Source as SourceResourceModel;
 use Magento\Inventory\Model\ResourceModel\SourceItem\Collection;
 use Magento\Inventory\Model\ResourceModel\SourceItem\CollectionFactory;
@@ -129,6 +130,7 @@ class SourceItems extends AbstractModifier
 
     /**
      * @inheritdoc
+     * @throws LocalizedException
      */
     public function modifyMeta(array $meta)
     {
