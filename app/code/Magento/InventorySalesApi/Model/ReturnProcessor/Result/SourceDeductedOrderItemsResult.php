@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace Magento\InventorySalesApi\Model\ReturnProcessor\Result;
 
-use Magento\InventorySalesApi\Model\ReturnProcessor\Result\SourceDeductedOrderItem;
+
 
 /**
  * DTO used as returned type of GetSourceDeductedOrderItemsInterface

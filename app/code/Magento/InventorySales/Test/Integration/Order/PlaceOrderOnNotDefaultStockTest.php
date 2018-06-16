@@ -10,7 +10,7 @@ namespace Magento\InventorySales\Test\Integration\Order;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
+
 use Magento\Framework\Registry;
 use Magento\InventoryApi\Api\Data\StockInterface;
 use Magento\InventorySalesApi\Api\Data\SalesChannelInterface;
