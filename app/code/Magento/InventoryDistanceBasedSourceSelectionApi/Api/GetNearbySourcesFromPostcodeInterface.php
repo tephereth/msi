@@ -7,20 +7,22 @@ declare(strict_types=1);
 
 namespace Magento\InventoryDistanceBasedSourceSelectionApi\Api;
 
+use Magento\InventoryApi\Api\Data\SourceInterface;
+
 /**
  * Get nearby zip codes of a given zip code, based on the given radius in KM
  *
  * @api
  */
-interface GetNearbyZipcodesInterface
+interface GetNearbySourcesFromPostcodeInterface
 {
     /**
-     * Get nearby zip codes of a given zip code, based on the given radius in KM
+     * Get nearby sources to a given postcode code, based on the given radius in KM
      *
      * @param string $country
-     * @param string $zipcode
+     * @param string $postcode
      * @param int $radius
-     * @return string[]
+     * @return array
      */
-    public function execute(string $country, string $zipcode, int $radius);
+    public function execute(string $country, string $postcode, int $radius);
 }

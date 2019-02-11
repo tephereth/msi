@@ -7,22 +7,19 @@ declare(strict_types=1);
 
 namespace Magento\InventoryDistanceBasedSourceSelectionApi\Model;
 
-use Magento\InventoryDistanceBasedSourceSelectionApi\Api\GetNearbyZipcodesInterface;
-use Magento\InventorySourceSelectionApi\Api\Data\AddressInterface;
-use Magento\InventoryDistanceBasedSourceSelectionApi\Api\Data\LatLngInterface;
 use Magento\InventoryDistanceBasedSourceSelectionApi\Api\GetDistanceProviderCodeInterface;
-use Magento\InventoryDistanceBasedSourceSelectionApi\Api\GetLatLngFromAddressInterface;
-use Magento\InventoryDistanceBasedSourceSelectionApi\Exception\NoSuchLatLngFromAddressProviderException;
+use Magento\InventoryDistanceBasedSourceSelectionApi\Api\GetNearbySourcesFromPostcodeInterface;
+use Magento\InventoryDistanceBasedSourceSelectionApi\Exception\NoSuchNearbySourcesFromPostcodeProviderException;
 
 /**
  * Get latitude and longitude object from address
  *
  * @api
  */
-class GetNearbyZipcodes implements GetNearbyZipcodesInterface
+class GetNearbySourcesFromPostcode implements GetNearbySourcesFromPostcodeInterface
 {
     /**
-     * @var GetNearbyZipcodesInterface[]
+     * @var GetNearbySourcesFromPostcodeInterface[]
      */
     private $providers;
 
@@ -32,10 +29,10 @@ class GetNearbyZipcodes implements GetNearbyZipcodesInterface
     private $getDistanceProviderCode;
 
     /**
-     * GetLatLngFromSource constructor.
+     * GetNearbySourcesFromPostcode constructor.
      *
      * @param GetDistanceProviderCodeInterface $getDistanceProviderCode
-     * @param GetNearbyZipcodesInterface[] $providers
+     * @param GetNearbySourcesFromPostcodeInterface[] $providers
      * @SuppressWarnings(PHPMD.LongVariable)
      */
     public function __construct(
@@ -43,9 +40,9 @@ class GetNearbyZipcodes implements GetNearbyZipcodesInterface
         array $providers
     ) {
         foreach ($providers as $providerCode => $provider) {
-            if (!($provider instanceof GetNearbyZipcodesInterface)) {
+            if (!($provider instanceof GetNearbySourcesFromPostcodeInterface)) {
                 throw new \InvalidArgumentException(
-                    'LatLng provider ' . $providerCode . ' must implement ' . GetNearbyZipcodesInterface::class
+                    'LatLng provider ' . $providerCode . ' must implement ' . GetNearbySourcesFromPostcodeInterface::class
                 );
             }
         }
@@ -54,12 +51,15 @@ class GetNearbyZipcodes implements GetNearbyZipcodesInterface
         $this->getDistanceProviderCode = $getDistanceProviderCode;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function execute(string $country, string $zipcode, int $radius)
     {
         $code = $this->getDistanceProviderCode->execute();
         if (!isset($this->providers[$code])) {
-            throw new NoSuchLatLngFromAddressProviderException(
-                __('No such latitude and longitude from address provider: %1', $code)
+            throw new NoSuchNearbySourcesFromPostcodeProviderException(
+                __('No such sources from postcode provider: %1', $code)
             );
         }
 

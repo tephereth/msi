@@ -50,10 +50,10 @@
         </arguments>
     </type>
 
-    <type name="Magento\InventoryDistanceBasedSourceSelectionApi\Model\GetNearbyZipcodes">
+    <type name="Magento\InventoryDistanceBasedSourceSelectionApi\Model\GetNearbySourcesFromPostcode">
         <arguments>
             <argument name="providers" xsi:type="array">
-                <item name="offline" xsi:type="object">Magento\InventoryDistanceBasedSourceSelection\Model\DistanceProvider\Offline\GetNearbyZipcodes</item>
+                <item name="offline" xsi:type="object">Magento\InventoryDistanceBasedSourceSelection\Model\DistanceProvider\Offline\GetNearbySourcesFromPostcode</item>
             </argument>
         </arguments>
     </type>

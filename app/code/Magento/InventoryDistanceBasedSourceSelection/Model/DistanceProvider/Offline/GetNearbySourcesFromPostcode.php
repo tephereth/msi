@@ -3,34 +3,50 @@ declare(strict_types=1);
 
 namespace Magento\InventoryDistanceBasedSourceSelection\Model\DistanceProvider\Offline;
 
+use Magento\Framework\Api\FilterBuilder;
+use Magento\Framework\Api\Search\SearchCriteriaBuilder;
+use Magento\Framework\Api\Search\SearchCriteriaFactory;
+use Magento\Framework\Api\SortOrderBuilder;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\InventoryApi\Api\Data\SourceInterfaceFactory;
+use Magento\InventoryApi\Api\SourceRepositoryInterface;
+use Magento\InventoryDistanceBasedSourceSelectionAdminUi\Model\Config\Source\DistanceProvider;
 use Magento\InventoryDistanceBasedSourceSelectionApi\Api;
 
-class GetNearbyZipcodes implements Api\GetNearbyZipcodesInterface
+class GetNearbySourcesFromPostcode implements Api\GetNearbySourcesFromPostcodeInterface
 {
-    private const EARTH_RADIUS_KM = 6371000;
-
+    /** @var int  */
+    private const EARTH_RADIUS_KM = 6372.797;
+    /** @var ResourceConnection  */
     private $resourceConnection;
 
-    public function __construct(ResourceConnection $resourceConnection)
+    private $sourceInterfaceFactory;
+
+    public function __construct(ResourceConnection $resourceConnection,
+            SourceInterfaceFactory $sourceInterfaceFactory)
     {
         $this->resourceConnection = $resourceConnection;
+        $this->sourceInterfaceFactory = $sourceInterfaceFactory;
     }
 
-    public function execute(string $country, string $zipcode, int $radius)
+    /**
+     * @inheritdoc
+     */
+    public function execute(string $country, string $postcode, int $radius)
     {
         $connection = $this->resourceConnection->getConnection();
         $tableName = $this->resourceConnection->getTableName('inventory_geoname');
+        $sourceTable = $this->resourceConnection->getTableName('inventory_source');
 
         $qry = $connection->select()->from($tableName)
             ->where('country_code = ?', $country)
-            ->where('postcode = ?', $zipcode)
+            ->where('postcode = ?', $postcode)
             ->limit(1);
         $row = $connection->fetchRow($qry);
         if(!$row){
             throw new NoSuchEntityException(
-                __('Unknown geoname for %1 in %2', $zipcode, $country)
+                __('Unknown geoname for %1 in %2', $postcode, $country)
             );
         }
 
@@ -40,16 +56,16 @@ class GetNearbyZipcodes implements Api\GetNearbyZipcodesInterface
 
         // Build up a radial query
         $qry = $connection->select()
-            ->from($tableName)
-            ->columns(['postcode', $this->_createDistanceColumn($lat, $lng) . ' AS distance'])
+            ->from($sourceTable)
+            ->columns(['*', $this->_createDistanceColumn($lat, $lng) . ' AS distance'])
             ->having('distance <= ?', $radius);
 
         $rows = $connection->fetchAll($qry);
-
         $results = [];
-        array_walk($rows, function($row) use(&$results){
-           $results[] = $row['postcode'];
-        });
+        foreach($rows as $row){
+            $item = $this->sourceInterfaceFactory->create(['data'=>$row]);
+            $results[] = $item;
+        };
 
         return $results;
 
