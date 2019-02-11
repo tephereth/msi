@@ -50,6 +50,14 @@
         </arguments>
     </type>
 
+    <type name="Magento\InventoryDistanceBasedSourceSelectionApi\Model\GetNearbyZipcodes">
+        <arguments>
+            <argument name="providers" xsi:type="array">
+                <item name="offline" xsi:type="object">Magento\InventoryDistanceBasedSourceSelection\Model\DistanceProvider\Offline\GetNearbyZipcodes</item>
+            </argument>
+        </arguments>
+    </type>
+
     <type name="Magento\InventoryApi\Api\SourceRepositoryInterface">
         <plugin sortOrder="10" name="updateSourceLatitudeAndLongitude"
                 type="Magento\InventoryDistanceBasedSourceSelection\Plugin\FillSourceLatitudeAndLongitude"/>
