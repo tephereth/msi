@@ -41,10 +41,8 @@ class BackordersCondition implements GetIsStockItemSalableConditionInterface
         $itemMinQty = 'legacy_stock_item.min_qty';
 
         $condition = $globalBackorders === StockItemConfigurationInterface::BACKORDERS_NO
-            ? $useDefaultBackorders . ' = ' . StockItemConfigurationInterface::BACKORDERS_NO . ' AND ' .
-            $itemBackordersCondition
-            : $useDefaultBackorders . ' = ' . StockItemConfigurationInterface::BACKORDERS_YES_NONOTIFY .
-            ' OR ' . $itemBackordersCondition;
+            ? $useDefaultBackorders . ' = ' . (int) false . ' AND ' . $itemBackordersCondition
+            : $useDefaultBackorders . ' = ' . (int) true . ' OR ' . $itemBackordersCondition;
         $condition .= " AND ($itemMinQty >= 0 OR legacy_stock_item.qty > $itemMinQty)";
 
         return $condition;
